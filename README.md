@@ -391,6 +391,12 @@ Commandes iptables :
 
 ```bash
 LIVRABLE : Commandes iptables
+iptables -A FORWARD -p icmp --icmp-types 8 -s 192.168.100.0/24 -o eth0 -j ACCEPT
+iptables -A FORWARD -p icmp --icmp-types 0 -d 192.168.100.0/24 -i eth0 -j ACCEPT
+iptables -A FORWARD -p icmp --icmp-types 0 -s 192.168.100.0/24 -d 192.168.200.0/24 -j ACCEPT
+iptables -A FORWARD -p icmp --icmp-types 8 -d 192.168.100.0/24 -s 192.168.200.0/24 -j ACCEPT
+iptables -A FORWARD -p icmp --icmp-types 0 -d 192.168.100.0/24 -s 192.168.200.0/24 -j ACCEPT
+iptables -A FORWARD -p icmp --icmp-types 8 -s 192.168.100.0/24 -d 192.168.200.0/24 -j ACCEPT
 ```
 ---
 
@@ -408,7 +414,7 @@ Faire une capture du ping.
 
 ---
 **LIVRABLE : capture d'écran de votre ping vers l'Internet.**
-
+![Ping sur le WAN](figures/pingWAN.png)
 ---
 
 <ol type="a" start="3">
@@ -445,7 +451,6 @@ ping www.google.com
 ```
 
 * Faire une capture du ping.
-
 ---
 
 **LIVRABLE : capture d'écran de votre ping.**
@@ -460,6 +465,10 @@ Commandes iptables :
 
 ```bash
 LIVRABLE : Commandes iptables
+iptables -A FORWARD -p tcp -s 192.168.100.0/24 --dport 53 -o eth0 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -p udp -s 192.168.100.0/24 --dport 53 -o eth0 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -p tcp -d 192.168.100.0/24 --sport 53 -i eth0 -m state --state ESTABLISHED -j ACCEPT
+iptables -A FORWARD -p udp -d 192.168.100.0/24 --sport 53 -i eth0 -m state --state ESTABLISHED -j ACCEPT
 ```
 
 ---
@@ -472,7 +481,7 @@ LIVRABLE : Commandes iptables
 ---
 
 **LIVRABLE : capture d'écran de votre ping.**
-
+![Ping google.ch](figures/pingGoogle.png)
 ---
 
 <ol type="a" start="6">
@@ -484,7 +493,7 @@ LIVRABLE : Commandes iptables
 **Réponse**
 
 **LIVRABLE : Votre réponse ici...**
-
+Au début le DNS n'était pas autorisé par le firewall car les policy de DROP étaient actives, une fois les règles activées les requêtes passaient.
 ---
 
 
@@ -503,7 +512,15 @@ Commandes iptables :
 ---
 
 ```bash
-LIVRABLE : Commandes iptables
+Condition 3 :
+iptables -A FORWARD -p tcp -s 192.168.100.0/24 -o eth0 --dport 80 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -p tcp -s 192.168.100.0/24 -o eth0 --dport 8080 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -p tcp -d 192.168.100.0/24 -i eth0 --sport 80 -m conntrack --ctstate ESTABLISHED -j ACCEPT
+iptables -A FORWARD -p tcp -d 192.168.100.0/24 -i eth0 --sport 8080 -m conntrack --ctstate ESTABLISHED -j ACCEPT
+
+Condition 4 :
+iptables -A FORWARD -p tcp -d 192.168.100.0/24 -i eth0 --sport 8080 -m conntrack --ctstate ESTABLISHED -j ACCEPT
+iptables -A FORWARD -p tcp -s 192.168.100.0/24 -o eth0 --dport 443 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
 ```
 
 ---
@@ -516,6 +533,10 @@ Commandes iptables :
 
 ```bash
 LIVRABLE : Commandes iptables
+iptables -A FORWARD -p tcp -s 192.168.200.3 -d 192.168.100.0/24 --sport 80 -m conntrack --ctstate ESTABLISHED -j ACCEPT
+iptables -A FORWARD -p tcp -d 192.168.200.3 -s 192.168.100.0/24 --dport 80 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -p tcp -d 192.168.200.3 -i eth0 --dport 80 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -p tcp -s 192.168.200.3 -o eth0 -m conntrack --ctstate ESTABLISHED -j ACCEPT
 ```
 ---
 
@@ -527,7 +548,7 @@ LIVRABLE : Commandes iptables
 ---
 
 **LIVRABLE : capture d'écran.**
-
+![wget LAN->DMZ](figures/wgetDMZ.png)
 ---
 
 
@@ -544,6 +565,12 @@ Commandes iptables :
 
 ```bash
 LIVRABLE : Commandes iptables
+Condition 6:
+iptables -A FORWARD -p tcp -s 192.168.100.3 -d 192.168.200.3 --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -p tcp -d 192.168.100.3 -s 192.168.200.3 --sport 22 -m state --state ESTABLISHED -j ACCEPT
+Condition 7:
+iptables -A INPUT -p tcp -s 192.168.100.3 --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A OUTPUT -p tcp -d 192.168.100.3 --sport 22 -m state --state ESTABLISHED -j ACCEPT
 ```
 
 ---
@@ -557,7 +584,7 @@ ssh root@192.168.200.3 (password : celui que vous avez configuré)
 ---
 
 **LIVRABLE : capture d'écran de votre connexion ssh.**
-
+![wget LAN->DMZ](figures/sshDMZ.png)
 ---
 
 <ol type="a" start="9">
@@ -569,6 +596,7 @@ ssh root@192.168.200.3 (password : celui que vous avez configuré)
 **Réponse**
 
 **LIVRABLE : Votre réponse ici...**
+Se connecter sur un terminal dans le serveur afin de faire des configs sans avoir un accès physique au serveur.
 
 ---
 
@@ -582,7 +610,8 @@ ssh root@192.168.200.3 (password : celui que vous avez configuré)
 **Réponse**
 
 **LIVRABLE : Votre réponse ici...**
-
+À vérifier :
+Spécifier un minimum d'IPs qui auraient accès sinon trop de monde pourrait se connecter.
 ---
 
 ## Règles finales iptables
@@ -597,5 +626,5 @@ A présent, vous devriez avoir le matériel nécessaire afin de reproduire la ta
 ---
 
 **LIVRABLE : capture d'écran avec toutes vos règles.**
-
+![list iptables](figures/listIptables.png)
 ---
