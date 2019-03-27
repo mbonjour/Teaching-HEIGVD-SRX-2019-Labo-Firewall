@@ -226,8 +226,7 @@ ping 192.168.200.3
 ```
 ---
 
-**LIVRABLE : capture d'écran de votre tentative de ping.**  
-
+![ping ne marches pas entres machines](figures/pingDMZ.jpg)
 ---
 
 En effet, la communication entre les clients dans le LAN et les serveurs dans la DMZ doit passer à travers le Firewall. Il faut donc définir le Firewall comme passerelle par défaut pour le client dans le LAN et le serveur dans la DMZ.
@@ -281,8 +280,7 @@ ping 192.168.100.3
 
 ---
 
-**LIVRABLE : capture d'écran de votre nouvelle tentative de ping.**
-
+![ping après configs](figures/pingLAN.jpg)
 ---
 
 La communication est maintenant possible entre les deux machines. Pourtant, si vous essayez de communiquer depuis le client ou le serveur vers l'Internet, ça ne devrait pas encore fonctionner sans une manipulation supplémentaire au niveau du firewall. Vous pouvez le vérifier avec un ping depuis le client ou le serveur vers une adresse Internet. 
@@ -295,8 +293,7 @@ ping 8.8.8.8
 
 ---
 
-**LIVRABLE : capture d'écran de votre ping vers l'Internet.**
-
+![test ping google](figures/testPing.jpg)
 ---
 
 ### Configuration réseau du firewall
@@ -390,7 +387,6 @@ Commandes iptables :
 ---
 
 ```bash
-LIVRABLE : Commandes iptables
 iptables -A FORWARD -p icmp --icmp-types 8 -s 192.168.100.0/24 -o eth0 -j ACCEPT
 iptables -A FORWARD -p icmp --icmp-types 0 -d 192.168.100.0/24 -i eth0 -j ACCEPT
 iptables -A FORWARD -p icmp --icmp-types 0 -s 192.168.100.0/24 -d 192.168.200.0/24 -j ACCEPT
@@ -413,7 +409,6 @@ ping 8.8.8.8
 Faire une capture du ping.
 
 ---
-**LIVRABLE : capture d'écran de votre ping vers l'Internet.**
 ![Ping sur le WAN](figures/pingWAN.png)
 ---
 
@@ -492,7 +487,6 @@ iptables -A FORWARD -p udp -d 192.168.100.0/24 --sport 53 -i eth0 -m state --sta
 ---
 **Réponse**
 
-**LIVRABLE : Votre réponse ici...**
 Au début le DNS n'était pas autorisé par le firewall car les policy de DROP étaient actives, une fois les règles activées les requêtes passaient.
 ---
 
@@ -512,7 +506,6 @@ Commandes iptables :
 ---
 
 ```bash
-Condition 3 :
 iptables -A FORWARD -p tcp -s 192.168.100.0/24 -o eth0 --dport 80 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
 iptables -A FORWARD -p tcp -s 192.168.100.0/24 -o eth0 --dport 8080 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
 iptables -A FORWARD -p tcp -d 192.168.100.0/24 -i eth0 --sport 80 -m conntrack --ctstate ESTABLISHED -j ACCEPT
@@ -532,7 +525,6 @@ Commandes iptables :
 ---
 
 ```bash
-LIVRABLE : Commandes iptables
 iptables -A FORWARD -p tcp -s 192.168.200.3 -d 192.168.100.0/24 --sport 80 -m conntrack --ctstate ESTABLISHED -j ACCEPT
 iptables -A FORWARD -p tcp -d 192.168.200.3 -s 192.168.100.0/24 --dport 80 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
 iptables -A FORWARD -p tcp -d 192.168.200.3 -i eth0 --dport 80 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
@@ -547,7 +539,6 @@ iptables -A FORWARD -p tcp -s 192.168.200.3 -o eth0 -m conntrack --ctstate ESTAB
 
 ---
 
-**LIVRABLE : capture d'écran.**
 ![wget LAN->DMZ](figures/wgetDMZ.png)
 ---
 
@@ -564,7 +555,6 @@ Commandes iptables :
 ---
 
 ```bash
-LIVRABLE : Commandes iptables
 Condition 6:
 iptables -A FORWARD -p tcp -s 192.168.100.3 -d 192.168.200.3 --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
 iptables -A FORWARD -p tcp -d 192.168.100.3 -s 192.168.200.3 --sport 22 -m state --state ESTABLISHED -j ACCEPT
@@ -583,7 +573,6 @@ ssh root@192.168.200.3 (password : celui que vous avez configuré)
 
 ---
 
-**LIVRABLE : capture d'écran de votre connexion ssh.**
 ![wget LAN->DMZ](figures/sshDMZ.png)
 ---
 
@@ -595,7 +584,6 @@ ssh root@192.168.200.3 (password : celui que vous avez configuré)
 ---
 **Réponse**
 
-**LIVRABLE : Votre réponse ici...**
 Se connecter sur un terminal dans le serveur afin de faire des configs sans avoir un accès physique au serveur.
 
 ---
@@ -609,7 +597,6 @@ Se connecter sur un terminal dans le serveur afin de faire des configs sans avoi
 ---
 **Réponse**
 
-**LIVRABLE : Votre réponse ici...**
 À vérifier :
 Spécifier un minimum d'IPs qui auraient accès sinon trop de monde pourrait se connecter.
 ---
@@ -624,7 +611,5 @@ A présent, vous devriez avoir le matériel nécessaire afin de reproduire la ta
 </ol>
 
 ---
-
-**LIVRABLE : capture d'écran avec toutes vos règles.**
 ![list iptables](figures/listIptables.png)
 ---
