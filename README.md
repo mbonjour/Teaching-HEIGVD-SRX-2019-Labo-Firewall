@@ -431,7 +431,7 @@ Faire une capture du ping.
 | Interface DMZ du FW  |  KO     | Policy en DROP sur l'INPUT du Firewall, il n'acceptes donc pas les pings                             |
 | Interface LAN du FW  |    KO   | Pareil qu'au dessus malgré que les pings sont censé passé de DMZ -> LAN                             |
 | Serveur DMZ          |    OK |  localhost, normal qu'on puisse ping donc                            |
-| Serveur WAN          |     OK|  bizarre, à vérifier                            |
+| Serveur WAN          |     KO|  Il n'y a pas de règles qui permettent cette communication, elle est donc bloquée                          |
 
 
 ## Règles pour le protocole DNS
@@ -448,7 +448,7 @@ ping www.google.com
 * Faire une capture du ping.
 ---
 
-**LIVRABLE : capture d'écran de votre ping.**
+![google ping fail](figures/pingGoogleFirst.png)
 
 ---
 
@@ -559,8 +559,8 @@ Condition 6:
 iptables -A FORWARD -p tcp -s 192.168.100.3 -d 192.168.200.3 --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
 iptables -A FORWARD -p tcp -d 192.168.100.3 -s 192.168.200.3 --sport 22 -m state --state ESTABLISHED -j ACCEPT
 Condition 7:
-iptables -A INPUT -p tcp -s 192.168.100.3 --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
-iptables -A OUTPUT -p tcp -d 192.168.100.3 --sport 22 -m state --state ESTABLISHED -j ACCEPT
+iptables -A INPUT -p tcp -s 192.168.100.3 -d 192.168.100.2 --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A OUTPUT -p tcp -s 192.169.100.2 -d 192.168.100.3 --sport 22 -m state --state ESTABLISHED -j ACCEPT
 ```
 
 ---
@@ -584,7 +584,7 @@ ssh root@192.168.200.3 (password : celui que vous avez configuré)
 ---
 **Réponse**
 
-Se connecter sur un terminal dans le serveur afin de faire des configs sans avoir un accès physique au serveur.
+Se connecter sur un terminal du serveur afin de faire des configs sans avoir un accès physique au serveur. Cela est très utilisé pour administrer les serveurs, on a effet pas besoin d'écran pour chaque serveur. De plus cela nous fournis un accès sécurisé au serveur.
 
 ---
 
@@ -597,7 +597,6 @@ Se connecter sur un terminal dans le serveur afin de faire des configs sans avoi
 ---
 **Réponse**
 
-À vérifier :
 Spécifier un minimum d'IPs qui auraient accès sinon trop de monde pourrait se connecter.
 ---
 
@@ -611,5 +610,5 @@ A présent, vous devriez avoir le matériel nécessaire afin de reproduire la ta
 </ol>
 
 ---
-![list iptables](figures/listIptables.png)
+![list iptables](figures/listTable.png)
 ---
