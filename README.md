@@ -420,18 +420,18 @@ Faire une capture du ping.
 
 | De Client\_in\_LAN à | OK/KO | Commentaires et explications |
 | :---                 | :---: | :---                         |
-| Interface DMZ du FW  |  KO     |                              |
-| Interface LAN du FW  |  KO     |                              |
-| Client LAN           |    OK   |                              |
-| Serveur WAN          |   OK |                              |
+| Interface DMZ du FW  |  KO     | La règle LAN -> DMZ est active cependant la policy sur INPUT est DROP, on a donc pas de réponses                             |
+| Interface LAN du FW  |  KO     | L'explication est la même que précédent                             |
+| Client LAN           |    OK   | Ping sur localhost, fonctionnes toujours                             |
+| Serveur WAN          |   OK |   La règle FORWARD permet les PINGs de LAN -> WAN                           |
 
 
 | De Server\_in\_DMZ à | OK/KO | Commentaires et explications |
 | :---                 | :---: | :---                         |
-| Interface DMZ du FW  |  KO     |                              |
-| Interface LAN du FW  |    KO   |                              |
-| Serveur DMZ          |    OK |                              |
-| Serveur WAN          |     OK|                              |
+| Interface DMZ du FW  |  KO     | Policy en DROP sur l'INPUT du Firewall, il n'acceptes donc pas les pings                             |
+| Interface LAN du FW  |    KO   | Pareil qu'au dessus malgré que les pings sont censé passé de DMZ -> LAN                             |
+| Serveur DMZ          |    OK |  localhost, normal qu'on puisse ping donc                            |
+| Serveur WAN          |     OK|  bizarre, à vérifier                            |
 
 
 ## Règles pour le protocole DNS
