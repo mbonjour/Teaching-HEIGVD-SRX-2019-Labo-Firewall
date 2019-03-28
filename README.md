@@ -121,18 +121,34 @@ _Lors de la définition d'une zone, spécifier l'adresse du sous-réseau IP avec
 
 ---
 
-**LIVRABLE : Remplir le tableau**
-
-| Adresse IP source | Adresse IP destination | Type | Port src | Port dst | Action |
-| :---:             | :---:                  | :---:| :------: | :------: | :----: |
-|                   |                        |      |          |          |        |
-|                   |                        |      |          |          |        |
-|                   |                        |      |          |          |        |
-|                   |                        |      |          |          |        |
-|                   |                        |      |          |          |        |
-|                   |                        |      |          |          |        |
-|                   |                        |      |          |          |        |
-
+| Src              | Dst              | Type  | Port Src | Port Dst | Action | Condition  |
+|------------------|------------------|-------|----------|----------|--------|---|
+| *                | *                | *     | *        | *        | Drop   | 8 |
+| 192.168.100.0/24 | eth0             | UDP   | *        | 53       | Accept | 1 |
+| 192.168.100.0/24 | eth0             | TCP   | *        | 53       | Accept | 1 |
+| eth0             | 192.168.100.0/24 | UDP   | 53       | *        | Accept | 1 |
+| eth0             | 192.168.100.0/24 | TCP   | 53       | *        | Accept | 1 |
+| 192.168.100.0/24 | eth0             | ICMP  | *        | *        | Accept | 2 |
+| 192.168.100.0/24 | 192.168.200.0/24 | ICMP  | *        | *        | Accept |   |
+| 192.168.200.0/24 | 192.168.100.0/24 | ICMP  | *        | *        | Accept | 2 |
+| 192.168.100.0/24 | eth0             | HTTP  | *        | 80       | Accept | 3 |
+| 192.168.100.0/24 | eth0             | HTTP  | *        | 8080     | Accept | 3 |
+| 192.168.100.0/24 | HTTP             | eth0  | 80       | *        | Accept | 3 |
+| 192.168.100.0/24 | HTTP             | eth0  | 8080     | *        | Accept | 3 |
+| 192.168.100.0/24 | eth0             | HTTPS | *        | 443      | Accept | 4 |
+| 192.168.100.0/24 | HTTPS            | eth0  | 443      | *        | Accept | 4 |
+| eth0             | 192.168.200.3    | TCP   | *        | 53       | Accept | 5 |
+| eth0             | 192.168.200.3    | UDP   | *        | 53       | Accept | 5 |
+| 192.168.200.3    | eth0             | TCP   | 53       | *        | Accept | 5 |
+| 192.168.200.3    | eth0             | UDP   | 53       | *        | Accept | 5 |
+| 192.168.100.0/24 | 192.168.200.3    | TCP   | *        | 53       | Accept | 5 |
+| 192.168.100.0/24 | 192.168.200.3    | UDP   | *        | 53       | Accept | 5 |
+| 192.168.200.3    | 192.168.100.0/24 | TCP   | 53       | *        | Accept | 5 |
+| 192.168.200.3    | 192.168.100.0/24 | UDP   | 53       | *        | Accept | 5 |
+| 192.168.100.3    | 192.168.200.3    | TCP   | *        | 22       | Accept | 6 |
+| 192.168.200.3    | 192.168.100.3    | TCP   | 22       | *        | Accept | 6 |
+| 192.168.100.3    | 192.168.100.2    | TCP   |          | 22       | Accept | 7 |
+| 192.168.100.2    | 192.168.100.3    | TCP   | 22       | *        | Accept | 7 |
 ---
 
 # Installation de l’environnement virtualisé
@@ -459,7 +475,6 @@ Commandes iptables :
 ---
 
 ```bash
-LIVRABLE : Commandes iptables
 iptables -A FORWARD -p tcp -s 192.168.100.0/24 --dport 53 -o eth0 -m state --state NEW,ESTABLISHED -j ACCEPT
 iptables -A FORWARD -p udp -s 192.168.100.0/24 --dport 53 -o eth0 -m state --state NEW,ESTABLISHED -j ACCEPT
 iptables -A FORWARD -p tcp -d 192.168.100.0/24 --sport 53 -i eth0 -m state --state ESTABLISHED -j ACCEPT
@@ -506,6 +521,7 @@ Commandes iptables :
 ---
 
 ```bash
+Condition 3:
 iptables -A FORWARD -p tcp -s 192.168.100.0/24 -o eth0 --dport 80 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
 iptables -A FORWARD -p tcp -s 192.168.100.0/24 -o eth0 --dport 8080 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
 iptables -A FORWARD -p tcp -d 192.168.100.0/24 -i eth0 --sport 80 -m conntrack --ctstate ESTABLISHED -j ACCEPT
