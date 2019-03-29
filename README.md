@@ -438,14 +438,14 @@ Faire une capture du ping.
 | :---                 | :---: | :---                         |
 | Interface DMZ du FW  |  KO     | La règle LAN -> DMZ est active cependant la policy sur INPUT est DROP, on a donc pas de réponses                             |
 | Interface LAN du FW  |  KO     | L'explication est la même que précédent                             |
-| Client LAN           |    OK   | Ping sur localhost, fonctionnes toujours                             |
+| Client LAN           |    OK   | Ping sur localhost, fonctionne toujours                             |
 | Serveur WAN          |   OK |   La règle FORWARD permet les PINGs de LAN -> WAN                           |
 
 
 | De Server\_in\_DMZ à | OK/KO | Commentaires et explications |
 | :---                 | :---: | :---                         |
-| Interface DMZ du FW  |  KO     | Policy en DROP sur l'INPUT du Firewall, il n'acceptes donc pas les pings                             |
-| Interface LAN du FW  |    KO   | Pareil qu'au dessus malgré que les pings sont censé passé de DMZ -> LAN                             |
+| Interface DMZ du FW  |  KO     | Policy en DROP sur l'INPUT du Firewall, il n'accepte donc pas les pings                             |
+| Interface LAN du FW  |    KO   | Pareil qu'au dessus malgré que les pings sont censés passer de DMZ -> LAN                             |
 | Serveur DMZ          |    OK |  localhost, normal qu'on puisse ping donc                            |
 | Serveur WAN          |     KO|  Il n'y a pas de règles qui permettent cette communication, elle est donc bloquée                          |
 
@@ -503,7 +503,7 @@ iptables -A FORWARD -p udp -d 192.168.100.0/24 --sport 53 -i eth0 -m state --sta
 **Réponse**
 
 Au début le DNS n'était pas autorisé par le firewall car les policy de DROP étaient actives, une fois les règles activées les requêtes passaient.
----
+
 
 
 ## Règles pour les protocoles HTTP et HTTPS
@@ -593,14 +593,14 @@ ssh root@192.168.200.3 (password : celui que vous avez configuré)
 ---
 
 <ol type="a" start="9">
-  <li>Expliquer l'utilité de **ssh** sur un serveur. 
+  <li>Expliquer l'utilité de <b>ssh</b> sur un serveur. 
   </li>                                  
 </ol>
 
 ---
 **Réponse**
 
-Se connecter sur un terminal du serveur afin de faire des configs sans avoir un accès physique au serveur. Cela est très utilisé pour administrer les serveurs, on a effet pas besoin d'écran pour chaque serveur. De plus cela nous fournis un accès sécurisé au serveur.
+Se connecter sur un terminal du serveur afin de faire des configs sans avoir un accès physique au serveur. Cela est très utilisé pour administrer les serveurs, on a effet pas besoin d'écran pour chaque serveur. De plus cela nous fournit un accès sécurisé au serveur.
 
 ---
 
@@ -613,8 +613,8 @@ Se connecter sur un terminal du serveur afin de faire des configs sans avoir un 
 ---
 **Réponse**
 
-Spécifier un minimum d'IPs qui auraient accès sinon trop de monde pourrait se connecter.
----
+Spécifier un minimum d'IPs qui auraient accès sinon trop de monde pourrait se connecter. Ne pas mettre de masques de sous réseaux trop grand.
+
 
 ## Règles finales iptables
 
